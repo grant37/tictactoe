@@ -58,9 +58,11 @@ class Game extends React.Component {
 			history: [{
 				pos: {},
 				squares: Array(9).fill(null),
+				moveNum: 0,
 			}],
 			xIsNext: true,
 			stepNumber: 0,
+			ascending: true,
 		};
 	}
 
@@ -82,6 +84,7 @@ class Game extends React.Component {
 			history: history.concat([{ /* concat won't mutate orig. array */
 				pos: pos,
 				squares: squares,
+				moveNum: history.length,
 			}]),
 			xIsNext: !this.state.xIsNext,
 			stepNumber: history.length,
@@ -97,25 +100,27 @@ class Game extends React.Component {
 	}
 
 	render() {
-		const history = this.state.history;
-		const current = history[this.state.stepNumber];
+		const history = this.state.ascending ? 
+			this.state.history.slice() : 
+			this.state.history.slice().reverse();
+		const current = this.state.history[this.state.stepNumber];
 		const winner = calculateWinner(current.squares);
 
 		/* step is the object{array}, move is the number */
 		const moves = history.map((step, move) => {
-			const desc = move ?
-				'Go to move #' + move :
+			const desc = step.moveNum ?
+				'Go to move #' + step.moveNum :
 				'Go to game start';
 
-			const current = this.state.stepNumber === move;
+			const onMove = this.state.stepNumber === step.moveNum;
 			return (
-				<li key={move}>
+				<li key={step.moveNum} value={step.moveNum}>
 					<button 
-						onClick={() => this.jumpTo(move)}
-						className={current ? "btn current" : "btn"}
+						onClick={() => this.jumpTo(step.moveNum)}
+						className={ onMove ? "btn current" : "btn" }
 					>
 					{desc} 
-					{ move ?
+					{ step.moveNum ?
 						(' at (' + step.pos.row +',' + step.pos.col + ')') :
 						null
 					}
@@ -141,7 +146,17 @@ class Game extends React.Component {
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
-					<button>order</button>
+					<button
+						className="btn"
+						onClick={() => 
+							this.setState({ascending: !this.state.ascending})
+						}
+					>
+					{this.state.ascending ? 
+						'moves descending' : 
+						'moves ascending'
+					}
+					</button>
 					<ol>{moves}</ol>
 				</div>
 			</div>
