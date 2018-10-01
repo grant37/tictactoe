@@ -9,7 +9,7 @@ const Square = props => {
 	/* also notice lack of the 'this' keyword */
 	return (
 		<button 
-			className="square" 
+			className={props.highlight ? "square highlight" : "square"} 
 			onClick={props.onClick}
 		>
 			{props.value}	
@@ -21,8 +21,17 @@ const Square = props => {
 class Board extends React.Component {
 
 	renderSquare(i) {
+		let highlight;
+		if (this.props.winner) {
+			const { s1, s2, s3 } = this.props.winner;
+		
+			if (i === s1 || i === s2 || i === s3) {
+				highlight = "win";
+			}
+		}
 		return (
-			<Square 
+			<Square
+				highlight={highlight ? highlight : null}
 				value={this.props.squares[i]}
 				onClick={() => this.props.onClick(i)}
 				key={i}
@@ -105,6 +114,7 @@ class Game extends React.Component {
 			this.state.history.slice().reverse();
 		const current = this.state.history[this.state.stepNumber];
 		const winner = calculateWinner(current.squares);
+		const draw = isDraw(current.squares);
 
 		/* step is the object{array}, move is the number */
 		const moves = history.map((step, move) => {
@@ -131,7 +141,10 @@ class Game extends React.Component {
 
 		let status;
 		if (winner) {
-			status = 'Winner: ' + winner;
+			status = 'Winner: ' + winner.winner;
+		} 
+		else if (draw) {
+			status = "Game ends in a draw!";
 		} else {
 			status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 		}
@@ -141,7 +154,8 @@ class Game extends React.Component {
 				<div className="game-board">
 					<Board 
 						squares={current.squares}
-						onClick={(i) => this.handleClick(i)} 
+						onClick={(i) => this.handleClick(i)}
+						winner={winner}
 					/>
 				</div>
 				<div className="game-info">
@@ -180,12 +194,22 @@ function calculateWinner(squares) {
 
 	for (let i = 0; i < lines.length; i++) {
 		const [ a, b, c ] = lines[i];
-		if (squares[a] && squares[a] === squares[b] 
-					   && squares[a] === squares[c]) {
-			return squares[a];
-		}
+		if (squares[a] && 
+			squares[a] === squares[b] && 
+			squares[a] === squares[c]) {
+			return {winner: squares[a], s1: a, s2: b, s3: c};
+		} 
 	}
+
 	return null;
+}
+
+function isDraw(squares) {
+	let notFull = false;
+	for (let i = 0; i < squares.length; i++) {
+		notFull = notFull || !squares[i]; /* true if squares[i] == null */
+	}
+	return !notFull
 }
 
 ReactDOM.render(

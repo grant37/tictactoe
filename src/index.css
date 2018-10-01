@@ -59,6 +59,11 @@ li {
   width: 84px;
 }
 
+.highlight {
+	background-color: limegreen;
+	color: black;
+}
+
 .square:focus {
   outline: none;
 }
