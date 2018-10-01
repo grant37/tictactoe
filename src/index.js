@@ -20,35 +20,29 @@ const Square = props => {
 /* class component board */
 class Board extends React.Component {
 
-
 	renderSquare(i) {
 		return (
 			<Square 
 				value={this.props.squares[i]}
 				onClick={() => this.props.onClick(i)}
-
+				key={i}
 			/>
 		);
 	}
 
 	render() {
+		let [ boardContent, squareId ] = [ [], 0 ];
+		for (let i = 0; i < 3; i++) {
+			let row = [];
+			for (let j = 0; j < 3; j++) {
+				row.push(this.renderSquare(squareId));
+				squareId++;
+			}
+			boardContent.push(<div key={i} className="board-row">{row}</div>);
+		}
 		return (
 			<div>
-				<div className="board-row">
-					{this.renderSquare(0)}
-					{this.renderSquare(1)}
-					{this.renderSquare(2)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(3)}
-					{this.renderSquare(4)}
-					{this.renderSquare(5)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(6)}
-					{this.renderSquare(7)}
-					{this.renderSquare(8)}
-				</div>
+				{boardContent}
 			</div>
 		);
 	}
@@ -75,9 +69,9 @@ class Game extends React.Component {
 		const history = this.state.history.slice(0, this.state.stepNumber+1);
 		const current = history[history.length - 1];
 		const squares = current.squares.slice();
-		let pos = {};					 /* (r,c) of the move */
-		pos.row = (i / 3) >> 0;      /* this is convenient */
-		pos.col = i - (pos.row * 3); /* this formula is generally valid */
+		let pos = {};					              /* (r,c) of the move */
+		pos.row = (i / 3) >> 0;                       /* this is convenient */
+		pos.col = i - (pos.row * 3);                  /* this formula is generally valid */
 
 		if (calculateWinner(squares) || squares[i]) {
 			return; /* no move to be made */
@@ -147,6 +141,7 @@ class Game extends React.Component {
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
+					<button>order</button>
 					<ol>{moves}</ol>
 				</div>
 			</div>
