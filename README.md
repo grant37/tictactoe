@@ -1,3 +1,3 @@
-Bootstrapped with create-react-app.
+React Applet.
 
-https://reactjs.org/tutorial/tutorial.html
+[Play it here](https://whispering-temple-31481.herokuapp.com/)
