@@ -80,7 +80,7 @@ class Game extends React.Component {
 		const history = this.state.history.slice(0, this.state.stepNumber+1);
 		const current = history[history.length - 1];
 		const squares = current.squares.slice();
-		let pos = {};					              /* (r,c) of the move */
+		let pos = {};				      /* (r,c) of the move */
 		pos.row = (i / 3) >> 0;                       /* this is convenient */
 		pos.col = i - (pos.row * 3);                  /* this formula is generally valid */
 
